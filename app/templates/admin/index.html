@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h2>Admin - Painel</h2>
+  <ul>
+    <li><a href="{{ url_for('css.upload_css') }}">Upload CSS (apenas admin)</a></li>
+  </ul>
+</div>
+{% endblock %}

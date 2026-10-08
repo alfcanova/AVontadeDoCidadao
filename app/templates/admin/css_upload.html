@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h2>Upload CSS (Admin)</h2>
+  <form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="file" name="file" accept=".css" required>
+    <button class="btn">Enviar</button>
+  </form>
+  <h3>Arquivos em css/</h3>
+  <ul>
+    {% for f in files %}<li>{{ f }}</li>{% endfor %}
+  </ul>
+</div>
+{% endblock %}

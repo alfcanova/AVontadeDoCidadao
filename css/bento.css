@@ -1,0 +1,140 @@
+/* ============================================================
+   TEMA BENTO GRID — Dark Tech
+   ============================================================ */
+
+[data-theme="bento"] {
+  --primary: #00ff88;
+  --primary-light: #66ffbb;
+  --primary-dark: #00cc6a;
+  --bg-start: #0d0d0d;
+  --bg-mid: #111111;
+  --bg-end: #0a0a0a;
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-bg-strong: rgba(255, 255, 255, 0.05);
+  --glass-bg-hover: rgba(255, 255, 255, 0.07);
+  --glass-border: rgba(0, 255, 136, 0.12);
+  --glass-border-light: rgba(0, 255, 136, 0.06);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 1px rgba(0,255,136,0.2);
+  --glass-shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 1px rgba(0,255,136,0.15);
+  --glass-blur: blur(12px);
+  --glass-blur-strong: blur(18px);
+  --text: #e0e0e0;
+  --text-light: rgba(224, 224, 224, 0.55);
+  --text-muted: rgba(224, 224, 224, 0.3);
+  --glow-primary: 0 0 20px rgba(0, 255, 136, 0.25);
+  --glow-success: 0 0 20px rgba(46, 204, 113, 0.25);
+  --glow-accent: 0 0 20px rgba(231, 76, 60, 0.25);
+  --orb1: rgba(0,255,136,0.12);
+  --orb2: rgba(0,200,255,0.08);
+  --select-bg: #141414;
+  --border: rgba(0,255,136,0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-xs: 6px;
+}
+[data-theme="bento"] body::before,
+[data-theme="bento"] body::after {
+  filter: blur(120px);
+  opacity: 0.25;
+}
+
+/* ===== OVERRIDES DE COMPONENTES — BENTO GRID ===== */
+
+[data-theme="bento"] .card {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+}
+[data-theme="bento"] .card::before { display: none; }
+[data-theme="bento"] .tabs {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  gap: 2px;
+}
+[data-theme="bento"] .tab-btn {
+  border-radius: var(--radius-xs);
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+}
+[data-theme="bento"] .tab-btn.active {
+  background: rgba(0,255,136,0.1);
+  color: var(--primary);
+  border: 1px solid rgba(0,255,136,0.2);
+  box-shadow: 0 0 12px rgba(0,255,136,0.1);
+}
+[data-theme="bento"] .btn-primary {
+  background: rgba(0,255,136,0.12);
+  color: var(--primary);
+  border: 1px solid rgba(0,255,136,0.3);
+  font-family: 'Courier New', monospace;
+  backdrop-filter: none;
+}
+[data-theme="bento"] .btn-primary:hover {
+  background: rgba(0,255,136,0.2);
+  box-shadow: 0 0 20px rgba(0,255,136,0.15);
+}
+[data-theme="bento"] .form-group input,
+[data-theme="bento"] .form-group select,
+[data-theme="bento"] .form-group textarea {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xs);
+  font-family: 'Courier New', monospace;
+  background: rgba(0,255,136,0.03);
+}
+[data-theme="bento"] .form-group input:focus,
+[data-theme="bento"] .form-group select:focus,
+[data-theme="bento"] .form-group textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(0,255,136,0.1), 0 0 12px rgba(0,255,136,0.1);
+}
+[data-theme="bento"] .cadastro-card {
+  border: 1px solid var(--glass-border);
+}
+[data-theme="bento"] .cadastro-header {
+  background: rgba(0,255,136,0.08);
+  border-bottom: 1px solid var(--glass-border);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+[data-theme="bento"] .stat-card {
+  border: 1px solid var(--glass-border);
+}
+[data-theme="bento"] .stat-card:hover {
+  box-shadow: 0 0 20px rgba(0,255,136,0.08);
+}
+[data-theme="bento"] .dash-kpi {
+  border: 1px solid var(--glass-border);
+}
+[data-theme="bento"] .modal {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+}
+[data-theme="bento"] .modal-header {
+  border-bottom: 1px solid var(--glass-border);
+}
+[data-theme="bento"] .badge-pendente,
+[data-theme="bento"] .badge-atendida,
+[data-theme="bento"] .badge-encaminhada {
+  border: 1px solid;
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.5px;
+}
+[data-theme="bento"] .table-wrapper {
+  border: 1px solid var(--glass-border);
+}
+[data-theme="bento"] thead {
+  background: rgba(0,255,136,0.08);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: 1px solid var(--glass-border);
+}
+[data-theme="bento"] th {
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+}
+[data-theme="bento"] .card-title {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+}

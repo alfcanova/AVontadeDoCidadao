@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="grid">
+  <section class="card">
+    <div class="dash-top">
+      <div class="pl-ativos">
+        <h3>Projeto de Lei de Iniciativa Popular</h3>
+        <ul>
+          {% for p in ativos %}<li>{{ p.titulo }} ({{ p.escopo }})</li>{% else %}<li>Nenhum ativo</li>{% endfor %}
+        </ul>
+      </div>
+      <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-val">{{ total_pl }}</div><div class="kpi-label">TOTAL</div></div>
+      <div class="kpi"><div class="kpi-val">{{ total_users }}</div><div class="kpi-label">CIDADÃOS</div></div>
+      <div class="kpi"><div class="kpi-val">{{ total_fed }}</div><div class="kpi-label">NACIONAL</div></div>
+      <div class="kpi"><div class="kpi-val">{{ total_ass }}</div><div class="kpi-label">ASSINATURAS</div></div>
+      <div class="kpi"><div class="kpi-val">{{ total_mun }}</div><div class="kpi-label">MUNICIPAL</div></div>
+      <div class="kpi"><div class="kpi-val">{{ em_votacao }}</div><div class="kpi-label">ATIVOS</div></div>
+      <div class="kpi"><div class="kpi-val">{{ total_est }}</div><div class="kpi-label">ESTADUAL</div></div>
+      <div class="kpi"><div class="kpi-val">{{ encerrados }}</div><div class="kpi-label">ENCERRADOS</div></div>
+    </div>
+    </div>
+  </section>
+  <section class="card card-access">
+    <div id="tab-login" class="tab-pane active">
+      <form method="post" action="{{ url_for('auth.login') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-group"><label>Usuário ou E-mail</label><input name="ident" required></div>
+        <div class="form-group"><label>Senha</label><input type="password" name="senha" required></div>
+        <div class="btn-row">
+          <button class="btn">Entrar</button>
+          <a class="btn" href="{{ url_for('auth.register') }}">Cadastro</a>
+        </div>
+      </form>
+      <small><a href="{{ url_for('auth.change_password') }}">Esqueceu a senha? Recuperar senha</a></small>
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+document.querySelectorAll('.tab-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(x=>x.style.display='none');
+    b.classList.add('active');
+    document.getElementById('tab-'+b.dataset.tab).style.display='block';
+  })
+})
+</script>
+{% endblock %}

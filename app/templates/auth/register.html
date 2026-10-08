@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h2>Auto-cadastro</h2>
+  <form method="post" id="frmReg">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <fieldset><legend>Dados de Acesso</legend>
+      <div class="row">
+        <div class="form-group"><label>Usuário</label><input name="username" required></div>
+        <div class="form-group"><label>E-mail</label><input type="email" name="email" required></div>
+        <div class="form-group"><label>Senha</label><input type="password" name="senha" required minlength="4"></div>
+      </div>
+    </fieldset>
+    <fieldset><legend>Dados Pessoais</legend>
+      <div class="row">
+        <div class="form-group"><label>Nome Completo</label><input name="nome_completo" required></div>
+        <div class="form-group"><label>CPF</label><input name="cpf" id="cpf" required placeholder="00000000000"></div>
+        <div class="form-group"><label>Data Nascimento</label><input type="date" name="data_nascimento" required></div>
+      </div>
+      <div class="row">
+        <div class="form-group"><label>RG Nº</label><input name="rg_numero" required></div>
+        <div class="form-group"><label>Órgão</label><input name="rg_orgao" required></div>
+        <div class="form-group"><label>UF RG</label><input name="rg_uf" maxlength="2" required></div>
+      </div>
+    </fieldset>
+    <fieldset><legend>Dados Eleitorais</legend>
+      <div class="row">
+        <div class="form-group"><label>Título Eleitoral</label><input name="titulo_eleitoral" required></div>
+        <div class="form-group"><label>Zona</label><input name="zona_eleitoral" required></div>
+        <div class="form-group"><label>Seção</label><input name="secao_eleitoral" required></div>
+      </div>
+    </fieldset>
+    <fieldset><legend>Endereço</legend>
+      <div class="row">
+        <div class="form-group"><label>CEP</label><input name="cep" id="cep" required></div>
+        <div class="form-group"><label>UF</label>
+          <select name="uf" id="uf" required>
+            <option value="">Selecione</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Município</label>
+          <select name="municipio_id" id="mun" required><option value="">Selecione UF</option></select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group"><label>Bairro</label><input name="bairro" required></div>
+        <div class="form-group"><label>Logradouro</label><input name="logradouro" required></div>
+        <div class="form-group"><label>Nº</label><input name="numero" required></div>
+        <div class="form-group"><label>Complemento</label><input name="complemento"></div>
+      </div>
+    </fieldset>
+    <fieldset><legend>LGPD</legend>
+      <label><input type="checkbox" name="lgpd_consent" required> Li e aceito o consentimento LGPD. <a href="{{ lgpd_link }}" target="_blank">Lei 13.709/2018</a></label>
+      <p><small>{{ lgpd_summary }}</small></p>
+    </fieldset>
+    <button class="btn">Cadastrar</button>
+  </form>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+document.addEventListener('DOMContentLoaded',async()=>{
+  const r=await fetch('/api/ufs'); const ufs=await r.json();
+  const sel=document.getElementById('uf');
+  ufs.forEach(u=>{ const o=document.createElement('option'); o.value=u.sigla; o.textContent=u.sigla+' - '+u.nome; sel.appendChild(o);});
+});
+document.getElementById('uf').addEventListener('change',async e=>{
+  const uf=e.target.value; const sel=document.getElementById('mun');
+  sel.innerHTML='<option>Carregando...</option>';
+  const r=await fetch('/api/municipios?uf='+uf); const data=await r.json();
+  sel.innerHTML='<option value="">Selecione</option>';
+  data.forEach(m=>{ const o=document.createElement('option'); o.value=m.id; o.textContent=m.nome; sel.appendChild(o);});
+});
+</script>
+{% endblock %}

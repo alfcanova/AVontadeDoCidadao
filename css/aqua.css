@@ -1,0 +1,31 @@
+/* ============================================================
+   TEMA LIQUID AQUA — Água Líquida
+   ============================================================ */
+
+[data-theme="aqua"] {
+  --primary: #0891b2;
+  --primary-light: #22d3ee;
+  --primary-dark: #0e7490;
+  --bg-start: #0c1929;
+  --bg-mid: #0a2540;
+  --bg-end: #0d3b66;
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-bg-strong: rgba(255, 255, 255, 0.14);
+  --glass-bg-hover: rgba(255, 255, 255, 0.18);
+  --glass-border: rgba(34, 211, 238, 0.2);
+  --glass-border-light: rgba(34, 211, 238, 0.1);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --glass-shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.25);
+  --glass-blur: blur(18px);
+  --glass-blur-strong: blur(28px);
+  --text: #e0f7fa;
+  --text-light: rgba(224, 247, 250, 0.65);
+  --text-muted: rgba(224, 247, 250, 0.4);
+  --glow-primary: 0 0 24px rgba(34, 211, 238, 0.35);
+  --glow-success: 0 0 20px rgba(46, 204, 113, 0.3);
+  --glow-accent: 0 0 20px rgba(231, 76, 60, 0.3);
+  --orb1: rgba(8,145,178,0.45);
+  --orb2: rgba(6,182,212,0.35);
+  --select-bg: #0a2540;
+  --border: rgba(34,211,238,0.2);
+}

@@ -1,0 +1,36 @@
+/* ============================================================
+   TEMA LIGHT — Claro
+   ============================================================ */
+
+[data-theme="light"] {
+  --primary: #3498db;
+  --primary-light: #5dade2;
+  --primary-dark: #2471a3;
+  --bg-start: #e8eaed;
+  --bg-mid: #f0f2f5;
+  --bg-end: #dce1e8;
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-bg-strong: rgba(255, 255, 255, 0.88);
+  --glass-bg-hover: rgba(255, 255, 255, 0.92);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-border-light: rgba(0, 0, 0, 0.06);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --glass-shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --glass-blur: blur(12px);
+  --glass-blur-strong: blur(16px);
+  --text: #2c3e50;
+  --text-light: #7f8c8d;
+  --text-muted: #aab7b8;
+  --glow-primary: 0 0 16px rgba(52, 152, 219, 0.2);
+  --glow-success: 0 0 16px rgba(46, 204, 113, 0.2);
+  --glow-accent: 0 0 16px rgba(231, 76, 60, 0.2);
+  --orb1: rgba(52,152,219,0.15);
+  --orb2: rgba(155,89,182,0.12);
+  --select-bg: #ffffff;
+  --border: rgba(0,0,0,0.1);
+}
+[data-theme="light"] body::before,
+[data-theme="light"] body::after {
+  opacity: 0.12;
+  filter: blur(100px);
+}

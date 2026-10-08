@@ -1,0 +1,31 @@
+/* ============================================================
+   TEMA FOREST — Floresta
+   ============================================================ */
+
+[data-theme="forest"] {
+  --primary: #27ae60;
+  --primary-light: #52d681;
+  --primary-dark: #1e8449;
+  --bg-start: #060f09;
+  --bg-mid: #0d2818;
+  --bg-end: #0a1f12;
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-bg-strong: rgba(255, 255, 255, 0.1);
+  --glass-bg-hover: rgba(255, 255, 255, 0.13);
+  --glass-border: rgba(82, 214, 129, 0.18);
+  --glass-border-light: rgba(82, 214, 129, 0.08);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --glass-shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.22);
+  --glass-blur: blur(16px);
+  --glass-blur-strong: blur(24px);
+  --text: #d5f5e3;
+  --text-light: rgba(213, 245, 227, 0.6);
+  --text-muted: rgba(213, 245, 227, 0.38);
+  --glow-primary: 0 0 22px rgba(82, 214, 129, 0.3);
+  --glow-success: 0 0 20px rgba(46, 204, 113, 0.3);
+  --glow-accent: 0 0 20px rgba(231, 76, 60, 0.3);
+  --orb1: rgba(39,174,96,0.4);
+  --orb2: rgba(30,132,73,0.35);
+  --select-bg: #0a1a0f;
+  --border: rgba(82,214,129,0.18);
+}

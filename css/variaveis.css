@@ -1,0 +1,13 @@
+/* ============================================================
+   VARIÁVEIS COMPARTILHADAS — Valores usados por todos os temas
+   ============================================================ */
+
+:root {
+  --accent: #e74c3c;
+  --success: #2ecc71;
+  --warning: #f1c40f;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 8px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.37);
+}

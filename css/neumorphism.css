@@ -1,0 +1,149 @@
+/* ============================================================
+   TEMA NEUMORPHISM — Soft UI
+   ============================================================ */
+
+[data-theme="neumorphism"] {
+  --primary: #6c5ce7;
+  --primary-light: #a29bfe;
+  --primary-dark: #5241c5;
+  --bg-start: #e0e5ec;
+  --bg-mid: #e0e5ec;
+  --bg-end: #d5dbe3;
+  --glass-bg: #e0e5ec;
+  --glass-bg-strong: #e8ecf1;
+  --glass-bg-hover: #eaedf2;
+  --glass-border: transparent;
+  --glass-border-light: transparent;
+  --glass-shadow: 9px 9px 16px rgba(163,177,198,0.6), -9px -9px 16px rgba(255,255,255,0.8);
+  --glass-shadow-sm: 6px 6px 12px rgba(163,177,198,0.5), -6px -6px 12px rgba(255,255,255,0.7);
+  --glass-blur: blur(0px);
+  --glass-blur-strong: blur(0px);
+  --text: #2d3436;
+  --text-light: #636e72;
+  --text-muted: #b2bec3;
+  --glow-primary: 0 0 0 transparent;
+  --glow-success: 0 0 0 transparent;
+  --glow-accent: 0 0 0 transparent;
+  --orb1: rgba(108,92,231,0.08);
+  --orb2: rgba(162,155,254,0.06);
+  --select-bg: #e0e5ec;
+  --border: transparent;
+  --neu-inset: inset 3px 3px 6px rgba(163,177,198,0.5), inset -3px -3px 6px rgba(255,255,255,0.7);
+  --neu-outset: 6px 6px 12px rgba(163,177,198,0.5), -6px -6px 12px rgba(255,255,255,0.7);
+}
+
+/* ===== OVERRIDES DE COMPONENTES — NEUMORPHISM ===== */
+
+[data-theme="neumorphism"] .card {
+  background: var(--glass-bg);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  box-shadow: var(--glass-shadow);
+}
+[data-theme="neumorphism"] .card:hover {
+  box-shadow: 9px 9px 18px rgba(163,177,198,0.65), -9px -9px 18px rgba(255,255,255,0.85);
+  transform: none;
+}
+[data-theme="neumorphism"] .card::before { display: none; }
+[data-theme="neumorphism"] .tabs {
+  background: var(--glass-bg);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  box-shadow: var(--glass-shadow-sm);
+}
+[data-theme="neumorphism"] .tab-btn.active {
+  background: var(--glass-bg);
+  box-shadow: inset 3px 3px 6px rgba(163,177,198,0.5), inset -3px -3px 6px rgba(255,255,255,0.7);
+  border: none;
+  color: var(--primary);
+}
+[data-theme="neumorphism"] .btn-primary {
+  background: var(--primary);
+  box-shadow: 5px 5px 10px rgba(163,177,198,0.5), -5px -5px 10px rgba(255,255,255,0.7);
+  border: none;
+  backdrop-filter: none;
+}
+[data-theme="neumorphism"] .btn-primary:hover {
+  box-shadow: inset 3px 3px 6px rgba(163,177,198,0.5), inset -3px -3px 6px rgba(255,255,255,0.7);
+  transform: none;
+}
+[data-theme="neumorphism"] .form-group input,
+[data-theme="neumorphism"] .form-group select,
+[data-theme="neumorphism"] .form-group textarea {
+  background: var(--glass-bg);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  box-shadow: inset 3px 3px 6px rgba(163,177,198,0.5), inset -3px -3px 6px rgba(255,255,255,0.7);
+}
+[data-theme="neumorphism"] .form-group input:focus,
+[data-theme="neumorphism"] .form-group select:focus,
+[data-theme="neumorphism"] .form-group textarea:focus {
+  box-shadow: inset 3px 3px 6px rgba(163,177,198,0.6), inset -3px -3px 6px rgba(255,255,255,0.8);
+  border: none;
+}
+[data-theme="neumorphism"] .search-row input,
+[data-theme="neumorphism"] .search-row select {
+  background: var(--glass-bg);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  box-shadow: inset 3px 3px 6px rgba(163,177,198,0.5), inset -3px -3px 6px rgba(255,255,255,0.7);
+}
+[data-theme="neumorphism"] .cadastro-card {
+  background: var(--glass-bg);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  box-shadow: var(--glass-shadow);
+}
+[data-theme="neumorphism"] .cadastro-header {
+  background: var(--primary);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+[data-theme="neumorphism"] .stat-card {
+  background: var(--glass-bg);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  box-shadow: var(--glass-shadow);
+}
+[data-theme="neumorphism"] .dash-kpi {
+  background: var(--glass-bg);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  box-shadow: var(--glass-shadow);
+}
+[data-theme="neumorphism"] .modal {
+  background: var(--glass-bg);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+[data-theme="neumorphism"] .modal-header {
+  background: var(--glass-bg);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+[data-theme="neumorphism"] .btn {
+  box-shadow: 4px 4px 8px rgba(163,177,198,0.5), -4px -4px 8px rgba(255,255,255,0.7);
+}
+[data-theme="neumorphism"] .btn:hover {
+  box-shadow: inset 2px 2px 5px rgba(163,177,198,0.5), inset -2px -2px 5px rgba(255,255,255,0.7);
+}
+[data-theme="neumorphism"] .filters-toggle,
+[data-theme="neumorphism"] .btn-clear-filters {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 3px 3px 6px rgba(163,177,198,0.4), -3px -3px 6px rgba(255,255,255,0.6);
+}
+[data-theme="neumorphism"] .cadastro-item-actions button {
+  box-shadow: 3px 3px 6px rgba(163,177,198,0.4), -3px -3px 6px rgba(255,255,255,0.6);
+  background: var(--glass-bg);
+}
+[data-theme="neumorphism"] .cadastro-item-actions button:hover {
+  box-shadow: inset 2px 2px 4px rgba(163,177,198,0.4), inset -2px -2px 4px rgba(255,255,255,0.6);
+}

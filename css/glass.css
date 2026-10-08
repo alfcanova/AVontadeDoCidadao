@@ -1,0 +1,31 @@
+/* ============================================================
+   TEMA GLASSMORPHISM — Vidro Fosco (default)
+   ============================================================ */
+
+:root, [data-theme="glass"] {
+  --primary: #4a90d9;
+  --primary-light: #64b5f6;
+  --primary-dark: #2563eb;
+  --bg-start: #0f0c29;
+  --bg-mid: #302b63;
+  --bg-end: #24243e;
+  --glass-bg: rgba(255, 255, 255, 0.07);
+  --glass-bg-strong: rgba(255, 255, 255, 0.12);
+  --glass-bg-hover: rgba(255, 255, 255, 0.15);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-border-light: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+  --glass-shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.2);
+  --glass-blur: blur(16px);
+  --glass-blur-strong: blur(24px);
+  --text: #e8eaf6;
+  --text-light: rgba(255, 255, 255, 0.6);
+  --text-muted: rgba(255, 255, 255, 0.4);
+  --glow-primary: 0 0 20px rgba(74, 144, 217, 0.3);
+  --glow-success: 0 0 20px rgba(46, 204, 113, 0.3);
+  --glow-accent: 0 0 20px rgba(231, 76, 60, 0.3);
+  --orb1: rgba(74,144,217,0.5);
+  --orb2: rgba(147,51,234,0.4);
+  --select-bg: #1a1a2e;
+  --border: rgba(255,255,255,0.18);
+}
