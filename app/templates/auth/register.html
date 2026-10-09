@@ -1,20 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="card">
-  <h2>Auto-cadastro</h2>
+<div class="card register-form">
+  <h2>Cadastro inicial</h2>
   <form method="post" id="frmReg">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <fieldset><legend>Dados de Acesso</legend>
       <div class="row">
         <div class="form-group"><label>Usuário</label><input name="username" required></div>
         <div class="form-group"><label>E-mail</label><input type="email" name="email" required></div>
-        <div class="form-group"><label>Senha</label><input type="password" name="senha" required minlength="4"></div>
+        <div class="form-group"><label>Senha</label><input type="password" name="senha" id="senha" required minlength="4"></div>
+        <div class="form-group"><label>Confirmar Senha</label><input type="password" name="senha_confirm" id="senha_confirm" required minlength="4"><small class="field-error" id="senha_conf_error">As senhas não conferem. Digite novamente.</small></div>
       </div>
     </fieldset>
     <fieldset><legend>Dados Pessoais</legend>
       <div class="row">
         <div class="form-group"><label>Nome Completo</label><input name="nome_completo" required></div>
-        <div class="form-group"><label>CPF</label><input name="cpf" id="cpf" required placeholder="00000000000"></div>
+        <div class="form-group"><label>CIN/CPF</label><input name="cpf" id="cpf" required inputmode="numeric" maxlength="14" pattern="\d{3}\.?\d{3}\.?\d{3}-?\d{2}"><small class="field-error" id="cpf_error">CPF inválido. Verifique os dígitos.</small></div>
         <div class="form-group"><label>Data Nascimento</label><input type="date" name="data_nascimento" required></div>
       </div>
       <div class="row">
@@ -32,20 +33,26 @@
     </fieldset>
     <fieldset><legend>Endereço</legend>
       <div class="row">
-        <div class="form-group"><label>CEP</label><input name="cep" id="cep" required></div>
+        <div class="form-group"><label>CEP</label><input name="cep" id="cep" required inputmode="numeric" maxlength="9"></div>
         <div class="form-group"><label>UF</label>
-          <select name="uf" id="uf" required>
-            <option value="">Selecione</option>
-          </select>
+          <div class="combobox" id="cb-uf">
+            <input type="text" class="cb-input" autocomplete="off" placeholder="Digite para buscar a UF...">
+            <input type="hidden" class="cb-hidden" name="uf">
+            <ul class="cb-list"></ul>
+          </div>
         </div>
         <div class="form-group"><label>Município</label>
-          <select name="municipio_id" id="mun" required><option value="">Selecione UF</option></select>
+          <div class="combobox" id="cb-mun">
+            <input type="text" class="cb-input" autocomplete="off" placeholder="Selecione a UF primeiro">
+            <input type="hidden" class="cb-hidden" name="municipio_id">
+            <ul class="cb-list"></ul>
+          </div>
         </div>
       </div>
       <div class="row">
-        <div class="form-group"><label>Bairro</label><input name="bairro" required></div>
-        <div class="form-group"><label>Logradouro</label><input name="logradouro" required></div>
-        <div class="form-group"><label>Nº</label><input name="numero" required></div>
+        <div class="form-group"><label>Bairro</label><input name="bairro" id="bairro" required></div>
+        <div class="form-group"><label>Logradouro</label><input name="logradouro" id="logradouro" required></div>
+        <div class="form-group"><label>Nº</label><input name="numero" id="numero" required></div>
         <div class="form-group"><label>Complemento</label><input name="complemento"></div>
       </div>
     </fieldset>
@@ -53,23 +60,87 @@
       <label><input type="checkbox" name="lgpd_consent" required> Li e aceito o consentimento LGPD. <a href="{{ lgpd_link }}" target="_blank">Lei 13.709/2018</a></label>
       <p><small>{{ lgpd_summary }}</small></p>
     </fieldset>
-    <button class="btn">Cadastrar</button>
+    <div class="form-actions"><button class="btn">Cadastrar</button><a class="btn" href="{{ url_for('main.index') }}">Voltar</a></div>
   </form>
 </div>
 {% endblock %}
 {% block js %}
 <script>
-document.addEventListener('DOMContentLoaded',async()=>{
-  const r=await fetch('/api/ufs'); const ufs=await r.json();
-  const sel=document.getElementById('uf');
-  ufs.forEach(u=>{ const o=document.createElement('option'); o.value=u.sigla; o.textContent=u.sigla+' - '+u.nome; sel.appendChild(o);});
-});
-document.getElementById('uf').addEventListener('change',async e=>{
-  const uf=e.target.value; const sel=document.getElementById('mun');
-  sel.innerHTML='<option>Carregando...</option>';
-  const r=await fetch('/api/municipios?uf='+uf); const data=await r.json();
-  sel.innerHTML='<option value="">Selecione</option>';
-  data.forEach(m=>{ const o=document.createElement('option'); o.value=m.id; o.textContent=m.nome; sel.appendChild(o);});
+const combo = Combobox.ufMunicipio({ ufSelector: '#cb-uf', munSelector: '#cb-mun', ufValueType: 'sigla' });
+
+// Busca de CEP na base dos Correios
+const cepInput=document.getElementById('cep');
+let cepUltimo='';
+function formatarCep(v){ v=v.replace(/\D/g,'').slice(0,8); return v.replace(/^(\d{5})(\d)/,'$1-$2'); }
+async function buscaCep(){
+  const cep=cepInput.value.replace(/\D/g,'');
+  if(cep.length!==8 || cep===cepUltimo) return;
+  cepUltimo=cep;
+  try{
+    const r=await fetch('/api/cep/'+cep);
+    const d=await r.json();
+    if(r.ok){
+      document.getElementById('logradouro').value=d.logradouro||'';
+      document.getElementById('bairro').value=d.bairro||'';
+      if(d.uf){
+        const ufs=await Combobox.getUfs();
+        const u=ufs.find(x=>x.sigla===d.uf);
+        combo.setUf(d.uf, u? u.sigla+' - '+u.nome : d.uf, d.uf);
+        const ms=await Combobox.getMunicipios(d.uf);
+        let m=null;
+        if(d.municipio_id) m=ms.find(x=>x.id===d.municipio_id);
+        if(!m && d.municipio) m=ms.find(x=>x.nome.toLowerCase()===d.municipio.toLowerCase());
+        if(m) combo.setMunicipio(m.id, m.nome);
+        document.getElementById('numero').focus();
+      }
+    } else { cepUltimo=''; }
+  }catch(e){ cepUltimo=''; }
+}
+cepInput.addEventListener('input',()=>{ cepInput.value=formatarCep(cepInput.value); if(cepInput.value.replace(/\D/g,'').length===8) buscaCep(); else cepUltimo=''; });
+cepInput.addEventListener('blur',buscaCep);
+
+// CPF: validação numérica dos dígitos
+const cpfInput=document.getElementById('cpf');
+const cpfError=document.getElementById('cpf_error');
+function formatarCpf(v){
+  v=v.replace(/\D/g,'').slice(0,11);
+  return v
+    .replace(/^(\d{3})(\d{3})(\d{3})(\d{1,2})$/,'$1.$2.$3-$4')
+    .replace(/^(\d{3})(\d{3})(\d{1,3})$/,'$1.$2.$3')
+    .replace(/^(\d{3})(\d{1,3})$/,'$1.$2');
+}
+function validarCpf(d){
+  if(!/^\d{11}$/.test(d)) return false;
+  if(/^(\d)\1{10}$/.test(d)) return false;
+  const dv=s=>{ let n=0; for(let i=0;i<s.length;i++) n+=parseInt(s[i],10)*(s.length+1-i); const r=11-n%11; return r>=10?'0':''+r; };
+  const d1=dv(d.slice(0,9));
+  const d2=dv(d.slice(0,9)+d1);
+  return d.slice(-2)===d1+d2;
+}
+function marcarErro(el,msg,mostrar){ if(el) el.classList.toggle('show',mostrar); if(msg) el.textContent=msg; }
+function checaCpf(){ const d=cpfInput.value.replace(/\D/g,''); const ok=!d || validarCpf(d); marcarErro(cpfError,'',!ok); return ok; }
+cpfInput.addEventListener('input',()=>{ cpfInput.value=formatarCpf(cpfInput.value); marcarErro(cpfError,'',false); });
+cpfInput.addEventListener('blur',checaCpf);
+
+// Senha: conferência ao sair do campo "Confirmar Senha"
+const senha=document.getElementById('senha'), senhaConf=document.getElementById('senha_confirm');
+const senhaConfError=document.getElementById('senha_conf_error');
+function checaSenha(){ const ok=senha.value===senhaConf.value; marcarErro(senhaConfError,'',!ok); return ok; }
+senhaConf.addEventListener('blur',()=>{ if(!checaSenha()){ senhaConf.value=''; senhaConf.focus(); } });
+senhaConf.addEventListener('input',()=>marcarErro(senhaConfError,'',false));
+senha.addEventListener('input',()=>marcarErro(senhaConfError,'',false));
+
+document.getElementById('frmReg').addEventListener('submit',e=>{
+  let ok=true;
+  if(!checaSenha()){
+    ok=false; senhaConf.value=''; senhaConf.focus();
+    alert('As senhas digitadas são diferentes. Digite novamente a confirmação.');
+  }
+  if(!checaCpf()){
+    ok=false; if(senhaConf.value!=='') cpfInput.focus();
+    alert('CPF inválido. Verifique os dígitos.');
+  }
+  if(!ok) e.preventDefault();
 });
 </script>
 {% endblock %}

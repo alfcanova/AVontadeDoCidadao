@@ -13,10 +13,26 @@ class Config:
     LGPD_SUMMARY = (
         'Resumo aplicável ao A VONTADE DO CIDADÃO: essa é a lei!: '
         'coleta-se dados mínimos para cadastro, comprovação de elegibilidade (maior de 16 anos e título de eleitor), '
-        'endereço, dados pessoais/eleitorais necessários à submissão e assinatura de PLdeIP (digital no sistema, gov.br ou física). '
-        'Usa-se minimização, mascaramento, hash de CPF e hash de IP. '
-        'Links para Lei 13.709/2018 e políticas internas.'
+        'endereço, dados pessoais/eleitorais necessários à submissão e assinatura de Projeto de Lei de Iniciativa Popular, '
+        'podendo ser: assinatura física, pelo sistema gov.br e digital no sistema.'
     )
+    CEP_LOOKUP_URL = os.getenv('CEP_LOOKUP_URL', 'https://viacep.com.br/ws')
+    QUORUM_PERCENTUAIS = {
+        'federal': 0.01,
+        'estadual': 0.02,
+        'municipal': 0.05,
+    }
+    TSE_CROSSWALK_URL = os.getenv(
+        'TSE_CROSSWALK_URL',
+        'https://cdn.tse.jus.br/estatistica/sead/odsele/municipio_tse_ibge/municipio_tse_ibge.zip'
+    )
+    TSE_ELEITORADO_URL_TEMPLATE = os.getenv(
+        'TSE_ELEITORADO_URL_TEMPLATE',
+        'https://cdn.tse.jus.br/estatistica/sead/odsele/perfil_eleitor_secao/perfil_eleitor_secao_ATUAL_{uf}.zip'
+    )
+    TSE_CACHE_DIAS = int(os.getenv('TSE_CACHE_DIAS', '30'))
+    TSE_FETCH_TIMEOUT = int(os.getenv('TSE_FETCH_TIMEOUT', '600'))
+    TSE_AUTO_FETCH = os.getenv('TSE_AUTO_FETCH', '1') == '1'
     CSS_DIR = os.path.join(BASE_DIR, 'css')
     DOCS_DIR = os.path.join(BASE_DIR, 'docs')
     DB_DIR = os.path.join(BASE_DIR, 'db')

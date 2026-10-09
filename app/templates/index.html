@@ -21,6 +21,13 @@
     </div>
     </div>
   </section>
+  {% if current_user.is_authenticated %}
+  <section class="card card-access">
+    <h3>Bem-vindo, <a href="{{ url_for('user.perfil') }}">{{ current_user.nome_completo or current_user.username }}</a></h3>
+    <a class="btn" href="{{ url_for('pl.listar') }}">Projetos de Lei</a>
+    <a class="btn" href="{{ url_for('auth.logout') }}">Sair</a>
+  </section>
+  {% else %}
   <section class="card card-access">
     <div id="tab-login" class="tab-pane active">
       <form method="post" action="{{ url_for('auth.login') }}">
@@ -35,6 +42,7 @@
       <small><a href="{{ url_for('auth.change_password') }}">Esqueceu a senha? Recuperar senha</a></small>
     </div>
   </section>
+  {% endif %}
 </div>
 {% endblock %}
 {% block js %}

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h2 style="text-align:center">Projetos de Lei de Iniciativa Popular</h2>
+  {% if current_user.is_authenticated %}
+  <p style="text-align:center">
+    <a class="btn" href="{{ url_for('pl.novo') }}">Novo Projeto</a>
+  </p>
+  {% endif %}
+  {% if projetos %}
+  <table style="width:100%;border-collapse:collapse">
+    <thead>
+      <tr style="text-align:left;color:var(--muted)">
+        <th style="padding:8px;border-bottom:1px solid var(--border)">Título</th>
+        <th style="padding:8px;border-bottom:1px solid var(--border)">Escopo</th>
+        <th style="padding:8px;border-bottom:1px solid var(--border)">Status</th>
+        <th style="padding:8px;border-bottom:1px solid var(--border)">Assinaturas</th>
+        <th style="padding:8px;border-bottom:1px solid var(--border)">Mínimo</th>
+        <th style="padding:8px;border-bottom:1px solid var(--border)">Autor</th>
+        <th style="padding:8px;border-bottom:1px solid var(--border)">Data</th>
+        <th style="padding:8px;border-bottom:1px solid var(--border)">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in projetos %}
+      <tr>
+        <td style="padding:8px;border-bottom:1px solid var(--border)">{{ p.titulo }}<br><small style="color:var(--muted)">{{ p.ementa }}</small></td>
+        <td style="padding:8px;border-bottom:1px solid var(--border)">{{ p.escopo }}</td>
+        <td style="padding:8px;border-bottom:1px solid var(--border)">{{ p.status }}</td>
+        <td style="padding:8px;border-bottom:1px solid var(--border)">{{ p.assinaturas }}</td>
+        <td style="padding:8px;border-bottom:1px solid var(--border)">{{ p.minimo or '—' }}</td>
+        <td style="padding:8px;border-bottom:1px solid var(--border)">{{ p.autor }}</td>
+        <td style="padding:8px;border-bottom:1px solid var(--border)">{{ p.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+        <td style="padding:8px;border-bottom:1px solid var(--border)">
+          {% if current_user.is_authenticated and p.autor_id == current_user.id and p.status_raw == 'rascunho' %}
+          <a class="btn" href="{{ url_for('pl.editar', pid=p.id) }}">Editar</a>
+          {% else %}
+          —
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="text-align:center">Nenhum projeto de lei cadastrado.</p>
+  {% endif %}
+</div>
+{% endblock %}

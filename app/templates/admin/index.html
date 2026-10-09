@@ -2,8 +2,9 @@
 {% block content %}
 <div class="card">
   <h2>Admin - Painel</h2>
-  <ul>
+<ul>
     <li><a href="{{ url_for('css.upload_css') }}">Upload CSS (apenas admin)</a></li>
+    <li><a href="{{ url_for('admin.quoruns') }}">CRUD Quóruns de Assinatura</a></li>
   </ul>
 </div>
 {% endblock %}

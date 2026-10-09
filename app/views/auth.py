@@ -15,6 +15,8 @@ auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/login', methods=['GET','POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
     if request.method=='POST':
         ident = request.form.get('ident','').strip()
         senha = request.form.get('senha','')
@@ -26,7 +28,6 @@ def login():
         db.session.commit()
         login_user(user)
         if user.must_change_password:
-            flash('Altere sua senha no primeiro acesso', 'warning')
             return redirect(url_for('auth.change_password'))
         return redirect(url_for('main.index'))
     return render_template('auth/login.html')
@@ -40,11 +41,14 @@ def logout():
 @auth_bp.route('/register', methods=['GET','POST'])
 def register():
     from ..models.ibge import IbgeUf
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
     ufs = IbgeUf.query.order_by(IbgeUf.sigla).all()
     if request.method=='POST':
         username = request.form.get('username','').strip().lower()
         email = request.form.get('email','').strip().lower()
         senha = request.form.get('senha','')
+        senha_conf = request.form.get('senha_confirm','')
         nome = request.form.get('nome_completo','').strip()
         cpf = ''.join(re.findall(r'\d', request.form.get('cpf','')))
         rg_num = request.form.get('rg_numero','').strip()
@@ -64,6 +68,8 @@ def register():
         consent = request.form.get('lgpd_consent')=='on'
 
         erros=[]
+        if len(senha) < 4: erros.append('Senha deve ter ao menos 4 caracteres')
+        if senha != senha_conf: erros.append('Senhas não conferem')
         if User.query.filter_by(username=username).first(): erros.append('Usuário já existe')
         if User.query.filter_by(email=email).first(): erros.append('E-mail já cadastrado')
         if not is_cpf_valid_digits(cpf): erros.append('CPF inválido')
@@ -113,7 +119,7 @@ def register():
         db.session.add(AuditLog(actor_id=user.id, actor_role='user', action='user.register', entity='user', entity_id=user.id, ip_hash=hmac_ip(request.remote_addr), metadata={'email':email}))
         db.session.commit()
         flash('Cadastro realizado com sucesso. Faça login.', 'success')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('main.index'))
     return render_template('auth/register.html', ufs=ufs)
 
 @auth_bp.route('/change-password', methods=['GET','POST'])
@@ -122,8 +128,14 @@ def change_password():
     if request.method=='POST':
         nova = request.form.get('nova','')
         conf = request.form.get('conf','')
-        if len(nova)<4 or nova!=conf:
-            flash('Senhas não conferem ou muito curta', 'danger')
+        if len(nova)<4:
+            flash('Senha muito curta', 'danger')
+            return render_template('auth/change_password.html')
+        if nova!=conf:
+            flash('Senhas não conferem', 'danger')
+            return render_template('auth/change_password.html')
+        if check_password_hash(current_user.password_hash, nova):
+            flash('A nova senha deve ser diferente da anterior', 'danger')
             return render_template('auth/change_password.html')
         current_user.password_hash = generate_password_hash(nova)
         current_user.must_change_password = False

@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h2 style="text-align:center">Admin - Quóruns de Assinatura</h2>
+
+  <form method="post" id="quorum-form" class="register-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="quorum_id" id="quorum_id">
+    <div>
+      <label>Escopo</label>
+      <select name="escopo" id="escopo" required>
+        <option value="">Selecione...</option>
+        {% for e in escopos %}
+        <option value="{{ e }}" {% if selected.escopo == e %}selected{% endif %}>{{ e|capitalize }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="alvo-group">
+      <label>UF</label>
+      <div class="combobox" id="cb-uf">
+        <input type="text" class="cb-input" autocomplete="off" placeholder="Digite para buscar a UF...">
+        <input type="hidden" class="cb-hidden" name="uf_id">
+        <ul class="cb-list"></ul>
+      </div>
+    </div>
+    <div class="alvo-group">
+      <label>Município</label>
+      <div class="combobox" id="cb-mun">
+        <input type="text" class="cb-input" autocomplete="off" placeholder="Selecione a UF primeiro">
+        <input type="hidden" class="cb-hidden" name="municipio_id">
+        <ul class="cb-list"></ul>
+      </div>
+    </div>
+    <div>
+      <label>Quantidade mínima de assinaturas</label>
+      <input type="number" name="qtd_minima" id="qtd_minima" min="0" required value="{{ selected.qtd_minima or '' }}">
+    </div>
+    <div>
+      <label>Descrição</label>
+      <input type="text" name="descricao" id="descricao" value="{{ selected.descricao or '' }}" maxlength="150">
+    </div>
+    <div>
+      <label><input type="checkbox" name="vigente" id="vigente" {% if selected.vigente %}checked{% endif %}> Vigente</label>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn" id="btn-salvar">Cadastrar quórum</button>
+      <a class="btn" href="{{ url_for('admin.quoruns') }}">Cancelar</a>
+    </div>
+  </form>
+
+  <h3>Quóruns existentes</h3>
+  {% if quoruns %}
+  <table style="width:100%;border-collapse:collapse">
+    <thead>
+      <tr style="text-align:left;color:var(--muted)">
+        <th style="padding:8px;border-bottom:1px solid var(--border)">Alvo</th>
+        <th style="padding:8px;border-bottom:1px solid var(--border)">Escopo</th>
+        <th style="padding:8px;border-bottom:1px solid var(--border)">Qtd mínima</th>
+        <th style="padding:8px;border-bottom:1px solid var(--border)">Vigente</th>
+        <th style="padding:8px;border-bottom:1px solid var(--border)">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in quoruns %}
+      {% set q = item.q %}
+      {% set uf_obj = (ufs | selectattr('id', 'equalto', q.uf_id) | list | first) if q.uf_id else None %}
+      <tr>
+        <td style="padding:8px;border-bottom:1px solid var(--border)">{{ item.alvo }}</td>
+        <td style="padding:8px;border-bottom:1px solid var(--border)">{{ q.escopo|capitalize }}</td>
+        <td style="padding:8px;border-bottom:1px solid var(--border)">{{ q.qtd_minima }}</td>
+        <td style="padding:8px;border-bottom:1px solid var(--border)">
+          {% if q.vigente %}<span style="color:var(--success)">Ativo</span>{% else %}<span style="color:var(--danger)">Inativo</span>{% endif %}
+        </td>
+        <td style="padding:8px;border-bottom:1px solid var(--border)">
+          <button type="button" class="btn" data-edit='{
+            "id": {{ q.id }},
+            "escopo": "{{ q.escopo }}",
+            "uf_id": {{ q.uf_id or 'null' }},
+            "uf_sigla": "{{ uf_obj.sigla if uf_obj else '' }}",
+            "uf_nome": "{{ uf_obj.nome if uf_obj else '' }}",
+            "municipio_id": {{ q.municipio_id or 'null' }},
+            "qtd_minima": {{ q.qtd_minima }},
+            "descricao": "{{ (q.descricao or '') | replace('"', '\\"') }}",
+            "vigente": {{ 'true' if q.vigente else 'false' }}
+          }' onclick="preencherEdicao(this)">Editar</button>
+          <form method="post" action="{{ url_for('admin.quoruns_toggle', qid=q.id) }}" style="display:inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn" style="margin-left:4px">{{ 'Inativar' if q.vigente else 'Ativar' }}</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="text-align:center">Nenhum quórum cadastrado.</p>
+  {% endif %}
+</div>
+
+<script>
+const escopoSel = document.getElementById('escopo');
+const qtdSel = document.getElementById('qtd_minima');
+const descSel = document.getElementById('descricao');
+const vigSel = document.getElementById('vigente');
+const form = document.getElementById('quorum-form');
+const btn = document.getElementById('btn-salvar');
+const hiddenId = document.getElementById('quorum_id');
+
+const combo = Combobox.ufMunicipio({ ufSelector: '#cb-uf', munSelector: '#cb-mun', ufValueType: 'id' });
+
+function escopoVisibilidade() {
+  const grupos = document.querySelectorAll('.alvo-group');
+  const esc = escopoSel.value;
+  if (esc === 'federal') {
+    grupos.forEach(g => g.style.display = 'none');
+  } else if (esc === 'estadual') {
+    grupos[0].style.display = ''; grupos[1].style.display = 'none';
+  } else {
+    grupos.forEach(g => g.style.display = '');
+  }
+}
+
+escopoSel.addEventListener('change', escopoVisibilidade);
+
+window.preencherEdicao = async function(btnEl) {
+  const d = JSON.parse(btnEl.dataset.edit);
+  hiddenId.value = d.id;
+  form.action = '{{ url_for("admin.quoruns_editar", qid=0) }}'.replace(/0$/, d.id);
+  btn.textContent = 'Salvar alterações';
+  escopoSel.value = d.escopo;
+  qtdSel.value = d.qtd_minima;
+  descSel.value = d.descricao;
+  vigSel.checked = d.vigente;
+  escopoVisibilidade();
+  if (d.uf_id) {
+    combo.setUf(d.uf_id, `${d.uf_sigla} - ${d.uf_nome}`, d.uf_sigla);
+    if (d.escopo === 'municipal' && d.municipio_id) {
+      const ms = await Combobox.getMunicipios(d.uf_sigla);
+      const m = ms.find(x => x.id === d.municipio_id);
+      combo.setMunicipio(d.municipio_id, m ? m.nome : '');
+    }
+  } else {
+    combo.uf.reset();
+    combo.mun.setEnabled(false, 'Selecione a UF primeiro');
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+</script>
+{% endblock %}

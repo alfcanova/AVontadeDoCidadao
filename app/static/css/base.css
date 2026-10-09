@@ -14,7 +14,8 @@ main.container{flex:1;width:95%;max-width:none;display:flex;flex-direction:colum
 .card{background:linear-gradient(180deg,rgba(56,189,248,.08),transparent);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 10px 30px rgba(2,6,23,.4)}
 .grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;width:100%}
 .grid .card h2{text-align:center}
-.card-access{display:flex;flex-direction:column;justify-content:center}
+.card-access{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10px}
+.card-access a.btn{display:block;width:100%;max-width:320px}
 @media(max-width:900px){.grid{grid-template-columns:1fr}}
 .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:34%;margin-left:auto}
 .dash-top{display:flex;align-items:flex-start}
@@ -29,6 +30,13 @@ main.container{flex:1;width:95%;max-width:none;display:flex;flex-direction:colum
 .tab-btn{background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:8px;cursor:pointer}
 .tab-btn.active{outline:2px solid var(--primary)}
 .form-group{margin-bottom:10px}
+.field-error{display:none;color:#f87171;font-size:12px;margin-top:4px}
+.field-error.show{display:block}
+.form-actions{display:flex;justify-content:center;margin-top:10px;margin-bottom:10px;gap:10px}
+.pwd-form input{text-align:center}
+.register-form h2{text-align:center}
+.register-form .form-group label{text-align:center}
+.register-form input,.register-form select{text-align:center}
 .form-group label{display:block;font-size:13px;color:var(--muted)}
 .form-group input,.form-group select{width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:#0b1220;color:var(--text)}
 .row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -44,3 +52,8 @@ a.btn{display:inline-block;text-decoration:none;text-align:center}
 .alert-success{background:rgba(16,185,129,.15)}
 .alert-danger{background:rgba(239,68,68,.15)}
 .alert-warning{background:rgba(250,204,21,.15)}
+.combobox{position:relative}
+.combobox .cb-input{width:100%}
+.combobox .cb-list{position:absolute;z-index:50;left:0;right:0;top:100%;margin:0;padding:0;list-style:none;max-height:240px;overflow-y:auto;background:#0b1220;border:1px solid var(--border);border-radius:8px;display:none}
+.combobox .cb-option{padding:8px 10px;cursor:pointer;font-size:14px}
+.combobox .cb-option:hover,.combobox .cb-option.active{background:rgba(56,189,248,.2)}

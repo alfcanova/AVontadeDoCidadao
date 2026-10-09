@@ -5,3 +5,4 @@ from .pl import RestricaoLegal, QuorumAssinatura, PlDeIp, PlRestricao
 from .assinatura import ChaveAssinatura, Assinatura
 from .css import UserCssPreference, CssFile
 from .audit import AuditLog
+from .tse import EleitoradoTse

@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h2 style="text-align:center">Meu Cadastro</h2>
+  <form method="post" id="frmPerfil">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <fieldset><legend>Dados de Acesso</legend>
+      <div class="row">
+        <div class="form-group"><label>Usuário</label><input value="{{ current_user.username }}" readonly></div>
+        <div class="form-group"><label>E-mail</label><input type="email" name="email" value="{{ (form or {}).get('email') or current_user.email }}" required></div>
+        <div class="form-group"><label>Senha</label><input type="password" name="senha" id="senha" minlength="4" autocomplete="new-password"></div>
+        <div class="form-group"><label>Confirmar Senha</label><input type="password" name="senha_confirm" id="senha_confirm" minlength="4" autocomplete="new-password"><small class="field-error" id="senha_conf_error">As senhas não conferem. Digite novamente.</small></div>
+      </div>
+    </fieldset>
+    <fieldset><legend>Dados Pessoais</legend>
+      <div class="row">
+        <div class="form-group"><label>Nome Completo</label><input name="nome_completo" value="{{ (form or {}).get('nome_completo') or current_user.nome_completo }}" required></div>
+        <div class="form-group"><label>CIN/CPF</label><input value="{{ current_user.cpf_mask }}" readonly></div>
+        <div class="form-group"><label>Data Nascimento</label><input type="date" name="data_nascimento" value="{{ (form or {}).get('data_nascimento') or current_user.data_nascimento }}" required></div>
+      </div>
+      <div class="row">
+        <div class="form-group"><label>RG Nº</label><input name="rg_numero" value="{{ (form or {}).get('rg_numero') or current_user.rg_numero }}" required></div>
+        <div class="form-group"><label>Órgão</label><input name="rg_orgao" value="{{ (form or {}).get('rg_orgao') or current_user.rg_orgao }}" required></div>
+        <div class="form-group"><label>UF RG</label><input name="rg_uf" maxlength="2" value="{{ (form or {}).get('rg_uf') or current_user.rg_uf }}" required></div>
+      </div>
+    </fieldset>
+    <fieldset><legend>Dados Eleitorais</legend>
+      <div class="row">
+        <div class="form-group"><label>Título Eleitoral</label><input name="titulo_eleitoral" value="{{ (form or {}).get('titulo_eleitoral') or current_user.titulo_eleitoral }}" required></div>
+        <div class="form-group"><label>Zona</label><input name="zona_eleitoral" value="{{ (form or {}).get('zona_eleitoral') or current_user.zona_eleitoral }}" required></div>
+        <div class="form-group"><label>Seção</label><input name="secao_eleitoral" value="{{ (form or {}).get('secao_eleitoral') or current_user.secao_eleitoral }}" required></div>
+      </div>
+    </fieldset>
+    <fieldset><legend>Endereço</legend>
+      <div class="row">
+        <div class="form-group"><label>CEP</label><input name="cep" id="cep" required inputmode="numeric" maxlength="9" value="{{ (form or {}).get('cep') or current_user.cep }}"></div>
+        <div class="form-group"><label>UF</label>
+          <div class="combobox" id="cb-uf">
+            <input type="text" class="cb-input" autocomplete="off" placeholder="Digite para buscar a UF...">
+            <input type="hidden" class="cb-hidden" name="uf">
+            <ul class="cb-list"></ul>
+          </div>
+        </div>
+        <div class="form-group"><label>Município</label>
+          <div class="combobox" id="cb-mun">
+            <input type="text" class="cb-input" autocomplete="off" placeholder="Selecione a UF primeiro">
+            <input type="hidden" class="cb-hidden" name="municipio_id">
+            <ul class="cb-list"></ul>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group"><label>Bairro</label><input name="bairro" id="bairro" value="{{ (form or {}).get('bairro') or current_user.bairro }}" required></div>
+        <div class="form-group"><label>Logradouro</label><input name="logradouro" id="logradouro" value="{{ (form or {}).get('logradouro') or current_user.logradouro }}" required></div>
+        <div class="form-group"><label>Nº</label><input name="numero" id="numero" value="{{ (form or {}).get('numero') or current_user.numero }}" required></div>
+        <div class="form-group"><label>Complemento</label><input name="complemento" value="{{ (form or {}).get('complemento') or current_user.complemento }}"></div>
+      </div>
+    </fieldset>
+    <div class="form-actions"><button class="btn">Atualizar</button><a class="btn" href="{{ url_for('main.index') }}">Voltar</a></div>
+  </form>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+const combo = Combobox.ufMunicipio({ ufSelector: '#cb-uf', munSelector: '#cb-mun', ufValueType: 'sigla' });
+window.comboPerfil = combo;
+
+(async function initUfMunicipio(){
+  const curUf = "{{ (form or {}).get('uf') or current_user.uf }}";
+  const curMun = "{{ (form or {}).get('municipio_id') or current_user.municipio_id }}";
+  if(!curUf) return;
+  const ufs = await Combobox.getUfs();
+  const u = ufs.find(x => x.sigla === curUf);
+  combo.setUf(curUf, u ? u.sigla + ' - ' + u.nome : curUf, curUf);
+  if(curMun){
+    const ms = await Combobox.getMunicipios(curUf);
+    const m = ms.find(x => String(x.id) === String(curMun));
+    if(m) combo.setMunicipio(m.id, m.nome);
+  }
+})();
+
+const cepInput=document.getElementById('cep');
+let cepUltimo='';
+function formatarCep(v){ v=v.replace(/\D/g,'').slice(0,8); return v.replace(/^(\d{5})(\d)/,'$1-$2'); }
+async function buscaCep(){
+  const cep=cepInput.value.replace(/\D/g,'');
+  if(cep.length!==8 || cep===cepUltimo) return;
+  cepUltimo=cep;
+  try{
+    const r=await fetch('/api/cep/'+cep);
+    const d=await r.json();
+    if(r.ok){
+      document.getElementById('bairro').value=d.bairro||'';
+      document.getElementById('logradouro').value=d.logradouro||'';
+      if(d.uf){
+        const ufs=await Combobox.getUfs();
+        const u=ufs.find(x=>x.sigla===d.uf);
+        combo.setUf(d.uf, u? u.sigla+' - '+u.nome : d.uf, d.uf);
+        const ms=await Combobox.getMunicipios(d.uf);
+        let m=null;
+        if(d.municipio_id) m=ms.find(x=>x.id===d.municipio_id);
+        if(!m && d.municipio) m=ms.find(x=>x.nome.toLowerCase()===d.municipio.toLowerCase());
+        if(m) combo.setMunicipio(m.id, m.nome);
+      }
+      document.getElementById('numero').focus();
+    } else { cepUltimo=''; }
+  }catch(e){ cepUltimo=''; }
+}
+// Senha: conferência ao sair do campo "Confirmar Senha" (mesmas regras do cadastro)
+const senha=document.getElementById('senha'), senhaConf=document.getElementById('senha_confirm');
+const senhaConfError=document.getElementById('senha_conf_error');
+function checaSenha(){ const ok=senha.value===senhaConf.value; senhaConfError.classList.toggle('show',!ok && (senha.value!==''||senhaConf.value!=='')); return ok; }
+senhaConf.addEventListener('blur',()=>{ if(!checaSenha() && (senha.value!==''||senhaConf.value!=='')){ senhaConf.value=''; senhaConf.focus(); } });
+senhaConf.addEventListener('input',()=>senhaConfError.classList.remove('show'));
+senha.addEventListener('input',()=>senhaConfError.classList.remove('show'));
+
+document.getElementById('frmPerfil').addEventListener('submit',e=>{
+  if(!checaSenha()){
+    e.preventDefault();
+    senhaConf.value=''; senhaConf.focus();
+    alert('As senhas digitadas são diferentes. Digite novamente a confirmação.');
+    return;
+  }
+});
+cepInput.addEventListener('input',()=>{ cepInput.value=formatarCep(cepInput.value); if(cepInput.value.replace(/\D/g,'').length===8) buscaCep(); else cepUltimo=''; });
+cepInput.addEventListener('blur',buscaCep);
+</script>
+{% endblock %}

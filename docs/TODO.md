@@ -37,13 +37,15 @@ Sistema web para cadastro, submissão, assinatura e tramitação de Projetos de 
 Disponibilizar p/ votação, retirar, processo de conclusão (verificar quórum) -> concluir p/ autoridades ou reprovar, arquivar. CRUD quóruns/restrições. Upload CSS.
 
 ## 6. API
-/api/ufs, /api/municipios, /api/municipios/<id>/distritos, /api/quorum
+/api/ufs, /api/municipios, /api/municipios/<id>/distritos, /api/quorum (inclui percentual TSE, eleitores e assinaturas), /api/cep/<cep>
 
 ## 7. Roadmap
 - [x] Base (config/models/views/templates/static/scripts)
-- [ ] CRUD Quóruns (admin)
-- [ ] PLdeIP completo (criar/editar/submeter + quórum dinâmico)
+- [x] CRUD Quóruns (admin)
+- [x] PLdeIP completo (criar/editar/submeter + quórum dinâmico)
+- [x] Quórum por percentual TSE (1% federal / 2% estadual / 5% municipal) com cache de eleitorado + script `scripts/importar_eleitorado_tse.py`
 - [ ] Fluxo votação/conclusão
 - [ ] Assinatura digital_sistema + PDF físico
 - [ ] Ajustes finos
 
+combobox de uf e município na caixa de Novo Projeto e Alteração de Projeto

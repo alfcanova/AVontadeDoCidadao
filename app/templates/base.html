@@ -9,18 +9,12 @@
     {% set pref = get_user_pref() %}
     {% if pref %}<link rel="stylesheet" href="{{ url_for('css.serve_css', filename=pref.css_filename) }}">{% endif %}
   {% endif %}
+  <script src="{{ url_for('static', filename='js/combobox.js') }}"></script>
 </head>
 <body>
-  <header class="site-header">
+<header class="site-header">
     <div class="container header-inner">
-      <div class="brand">{{ app_name }}
-        {% if current_user.is_authenticated %}
-          <span class="meta">
-            <span>{{ current_user.username }}</span> | <a href="{{ url_for('auth.logout') }}">Sair</a>
-            {% if current_user.role=='admin' %}| <a href="{{ url_for('admin.index') }}">Admin</a>{% endif %}
-          </span>
-        {% endif %}
-      </div>
+      <div class="brand">{{ app_name }}</div>
       <div class="relogio">
         <span id="relogio-hora">--:--:--</span>
         <span id="relogio-data">--/--/----</span>

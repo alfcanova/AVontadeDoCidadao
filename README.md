@@ -57,6 +57,7 @@ wsgi.py            # entrypoint WSGI
 | Rota | Descrição |
 |---|---|
 | `/api/ufs` | Lista UFs |
+| `/api/cep/<cep>` | Consulta endereço por CEP (base Correios) |
 | `/api/municipios` | Municípios (parâmetro `uf_id`) |
 | `/api/municipios/<id>/distritos` | Distritos do município |
 | `/api/quorum` | Quórum vigente por escopo |

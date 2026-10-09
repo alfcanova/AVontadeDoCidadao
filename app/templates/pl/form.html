@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h2 style="text-align:center">{{ 'Editar' if pl else 'Novo' }} Projeto de Lei de Iniciativa Popular</h2>
+  {% if pl and pl.status != 'rascunho' %}
+  <p style="color:var(--danger)">Este projeto está em processo de coleta de assinaturas e não pode ser editado.</p>
+  {% endif %}
+  <form method="post" class="register-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div>
+      <label>Título</label>
+      <input type="text" name="titulo" maxlength="200" required value="{{ vals.get('titulo', '') }}">
+    </div>
+    <div>
+      <label>Ementa</label>
+      <textarea name="ementa" rows="3" required>{{ vals.get('ementa', '') }}</textarea>
+    </div>
+    <div>
+      <label>Texto integral</label>
+      <textarea name="texto_integral" rows="10" required>{{ vals.get('texto_integral', '') }}</textarea>
+    </div>
+    <div>
+      <label>Escopo</label>
+      <select name="escopo" id="escopo" required>
+        <option value="">Selecione...</option>
+        <option value="municipal" {% if vals.get('escopo') == 'municipal' %}selected{% endif %}>Municipal</option>
+        <option value="estadual" {% if vals.get('escopo') == 'estadual' %}selected{% endif %}>Estadual</option>
+        <option value="federal" {% if vals.get('escopo') == 'federal' %}selected{% endif %}>Federal</option>
+      </select>
+    </div>
+    <div class="alvo-group" id="nf-uf">
+      <label>UF</label>
+      <div class="combobox" id="cb-uf">
+        <input type="text" class="cb-input" autocomplete="off" placeholder="Digite para buscar a UF...">
+        <input type="hidden" class="cb-hidden" name="uf_id">
+        <ul class="cb-list"></ul>
+      </div>
+    </div>
+    <div class="alvo-group" id="nf-mun">
+      <label>Município</label>
+      <div class="combobox" id="cb-mun">
+        <input type="text" class="cb-input" autocomplete="off" placeholder="Selecione a UF primeiro">
+        <input type="hidden" class="cb-hidden" name="municipio_id">
+        <ul class="cb-list"></ul>
+      </div>
+    </div>
+    <div>
+      <label>Quórum vigente para o alvo</label>
+      <div id="quorum-info" style="padding:8px;border:1px solid var(--border);border-radius:8px;min-height:1.4em;font-size:0.95em;text-align:center;line-height:1.5">
+        Selecione o escopo e o alvo para consultar o quórum.
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn">{{ 'Salvar alterações' if pl else 'Criar rascunho' }}</button>
+      <a class="btn" href="{{ url_for('pl.listar') }}">Voltar</a>
+    </div>
+  </form>
+
+  {% if pl and pl.status == 'rascunho' %}
+  <form method="post" action="{{ url_for('pl.submeter', pid=pl.id) }}" style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px;text-align:center">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <p style="color:var(--muted)">Após submeter, o projeto entra em coleta de assinaturas e <strong>não poderá mais ser editado</strong>.</p>
+    <button type="submit" class="btn">Submeter para coleta de assinaturas</button>
+  </form>
+  {% endif %}
+</div>
+
+<script>
+const escopoSel = document.getElementById('escopo');
+const qInfo = document.getElementById('quorum-info');
+const qurl = '{{ url_for("api.quorum") }}';
+
+const combo = Combobox.ufMunicipio({
+  ufSelector: '#cb-uf',
+  munSelector: '#cb-mun',
+  ufValueType: 'id',
+  onUfChange: () => consultarQuorum(),
+  onMunChange: () => consultarQuorum()
+});
+
+function escopoVisibilidade() {
+  const esc = escopoSel.value;
+  document.getElementById('nf-uf').style.display = (esc === 'federal') ? 'none' : '';
+  document.getElementById('nf-mun').style.display = (esc === 'municipal') ? '' : 'none';
+}
+
+function escopoLabel(e) {
+  return { municipal: 'Municipal', estadual: 'Estadual', federal: 'Federal' }[e] || e;
+}
+function fmtNum(n) {
+  return new Intl.NumberFormat('pt-BR').format(n);
+}
+function fmtPct(p) {
+  return (p * 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 }) + '%';
+}
+
+function consultarQuorum() {
+  const esc = escopoSel.value;
+  if (!esc) { qInfo.textContent = 'Selecione o escopo e o alvo para consultar o quórum.'; return; }
+  const params = new URLSearchParams({ escopo: esc });
+  if (esc === 'municipal') {
+    const mid = combo.getMunicipioValue();
+    if (!mid) { qInfo.textContent = 'Selecione o município.'; return; }
+    params.set('municipio_id', mid);
+  } else if (esc === 'estadual') {
+    const sigla = combo.getUfSigla();
+    if (!sigla) { qInfo.textContent = 'Selecione a UF.'; return; }
+    params.set('uf', sigla);
+  }
+  qInfo.textContent = 'Consultando quórum...';
+  fetch(qurl + '?' + params)
+    .then(r => r.json())
+    .then(d => {
+      if (!d.percentual) {
+        qInfo.textContent = 'Nenhum quórum vigente definido para este alvo. Contate a administração.';
+        return;
+      }
+      const alvo = `<strong>${escopoLabel(esc)}</strong>`;
+      const pct = `<strong>${fmtPct(d.percentual)}</strong> do eleitorado`;
+      let html;
+      if (d.qtd_assinaturas) {
+        html = `Quórum vigente para o alvo: ${alvo} — ${pct} ` +
+               `(${fmtNum(d.qtd_eleitores)} eleitores) = <strong>${fmtNum(d.qtd_assinaturas)} assinaturas</strong>.`;
+        if (d.coletado_em) {
+          const dt = new Date(d.coletado_em).toLocaleDateString('pt-BR');
+          html += `<br><span style="color:var(--muted);font-size:0.9em">Dados do TSE de ${dt}.</span>`;
+        }
+      } else {
+        html = `Quórum vigente para o alvo: ${alvo} — ${pct}.`;
+        html += '<br><span style="color:var(--muted)">Número de eleitores indisponível no cache do TSE (atualização agendada).</span>';
+        if (d.qtd_minima) {
+          html += `<br>Mínimo administrativo: ${fmtNum(d.qtd_minima)} assinaturas.`;
+        }
+      }
+      qInfo.innerHTML = html;
+    });
+}
+
+escopoSel.addEventListener('change', () => { escopoVisibilidade(); consultarQuorum(); });
+
+escopoVisibilidade();
+{% if vals.get('escopo') %}consultarQuorum();{% endif %}
+{% if vals.get('uf_id') and uf_label %}combo.setUf({{ vals.get('uf_id') }}, "{{ uf_label }}", "{{ uf_sigla }}");{% endif %}
+{% if vals.get('municipio_id') and mun_label %}combo.setMunicipio({{ vals.get('municipio_id') }}, "{{ mun_label }}");{% endif %}
+</script>
+{% endblock %}
